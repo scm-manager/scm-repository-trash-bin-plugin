@@ -22,17 +22,21 @@
  * SOFTWARE.
  */
 
-import { binder } from "@scm-manager/ui-extensions";
-import { ConfigurationBinder as cfgBinder } from "@scm-manager/ui-components";
-import MoveToTrashBinButton from "./MoveToTrashBinButton";
-import TrashBinConfiguration from "./TrashBinConfiguration";
-import TrashBin from "./TrashBin";
+package com.cloudogu.repositorytrashbin;
 
-binder.bind("repository.deleteButton", MoveToTrashBinButton, ({ repository }) => repository._links?.delete);
-cfgBinder.bindGlobal(
-  "/trashBin",
-  "scm-repository-trash-bin-plugin.config.link",
-  "trashBinConfig",
-  TrashBinConfiguration
-);
-cfgBinder.bindAdmin("/trashBin", "scm-repository-trash-bin-plugin.navLink", "fas fa-trash", "trashBin", TrashBin);
+import sonia.scm.ContextEntry;
+import sonia.scm.ExceptionWithContext;
+
+import java.util.List;
+
+public class RepositoryTrashBinException extends ExceptionWithContext {
+
+  protected RepositoryTrashBinException(List<ContextEntry> context, String message, Exception cause) {
+    super(context, message, cause);
+  }
+
+  @Override
+  public String getCode() {
+    return "D2TS3apYm1";
+  }
+}

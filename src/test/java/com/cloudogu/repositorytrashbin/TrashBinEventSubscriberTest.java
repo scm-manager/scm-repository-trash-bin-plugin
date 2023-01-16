@@ -22,17 +22,43 @@
  * SOFTWARE.
  */
 
-import { binder } from "@scm-manager/ui-extensions";
-import { ConfigurationBinder as cfgBinder } from "@scm-manager/ui-components";
-import MoveToTrashBinButton from "./MoveToTrashBinButton";
-import TrashBinConfiguration from "./TrashBinConfiguration";
-import TrashBin from "./TrashBin";
+package com.cloudogu.repositorytrashbin;
 
-binder.bind("repository.deleteButton", MoveToTrashBinButton, ({ repository }) => repository._links?.delete);
-cfgBinder.bindGlobal(
-  "/trashBin",
-  "scm-repository-trash-bin-plugin.config.link",
-  "trashBinConfig",
-  TrashBinConfiguration
-);
-cfgBinder.bindAdmin("/trashBin", "scm-repository-trash-bin-plugin.navLink", "fas fa-trash", "trashBin", TrashBin);
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import sonia.scm.HandlerEventType;
+import sonia.scm.repository.Repository;
+import sonia.scm.repository.RepositoryEvent;
+import sonia.scm.repository.RepositoryTestData;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
+@ExtendWith(MockitoExtension.class)
+class TrashBinEventSubscriberTest {
+
+  @Mock
+  private RepositoryBinManager binManager;
+
+  @InjectMocks
+  private TrashBinEventSubscriber subscriber;
+
+  @Test
+  void shouldDoNothing() {
+    subscriber.onEvent(new RepositoryEvent(HandlerEventType.CREATE, RepositoryTestData.create42Puzzle()));
+
+    verify(binManager, never()).addToTrashBin(any());
+  }
+
+  @Test
+  void shouldMoveRepoToTrash() {
+    Repository repo = RepositoryTestData.create42Puzzle();
+    subscriber.onEvent(new RepositoryEvent(HandlerEventType.BEFORE_DELETE, repo));
+
+    verify(binManager).addToTrashBin(repo);
+  }
+}

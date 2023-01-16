@@ -22,17 +22,21 @@
  * SOFTWARE.
  */
 
-import { binder } from "@scm-manager/ui-extensions";
-import { ConfigurationBinder as cfgBinder } from "@scm-manager/ui-components";
-import MoveToTrashBinButton from "./MoveToTrashBinButton";
-import TrashBinConfiguration from "./TrashBinConfiguration";
-import TrashBin from "./TrashBin";
+import { HalRepresentationWithEmbedded, HalRepresentation } from "@scm-manager/ui-types";
 
-binder.bind("repository.deleteButton", MoveToTrashBinButton, ({ repository }) => repository._links?.delete);
-cfgBinder.bindGlobal(
-  "/trashBin",
-  "scm-repository-trash-bin-plugin.config.link",
-  "trashBinConfig",
-  TrashBinConfiguration
-);
-cfgBinder.bindAdmin("/trashBin", "scm-repository-trash-bin-plugin.navLink", "fas fa-trash", "trashBin", TrashBin);
+export const RETENTION_TIME_OPTIONS = ["7", "14", "30"] as const;
+
+type RetentionTime = typeof RETENTION_TIME_OPTIONS[number];
+
+export type TrashBinConfig = HalRepresentation & {
+  retentionTime: RetentionTime;
+};
+
+export type TrashBinEntry = HalRepresentation & {
+  namespace: string;
+  name: string;
+  deletedAt: string;
+  deletedBy: string;
+};
+
+export type TrashBinEntryCollection = HalRepresentationWithEmbedded<{ entries: TrashBinEntry[] }>;

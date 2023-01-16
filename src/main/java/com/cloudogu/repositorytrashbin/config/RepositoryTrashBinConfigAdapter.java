@@ -22,17 +22,31 @@
  * SOFTWARE.
  */
 
-import { binder } from "@scm-manager/ui-extensions";
-import { ConfigurationBinder as cfgBinder } from "@scm-manager/ui-components";
-import MoveToTrashBinButton from "./MoveToTrashBinButton";
-import TrashBinConfiguration from "./TrashBinConfiguration";
-import TrashBin from "./TrashBin";
+package com.cloudogu.repositorytrashbin.config;
 
-binder.bind("repository.deleteButton", MoveToTrashBinButton, ({ repository }) => repository._links?.delete);
-cfgBinder.bindGlobal(
-  "/trashBin",
-  "scm-repository-trash-bin-plugin.config.link",
-  "trashBinConfig",
-  TrashBinConfiguration
-);
-cfgBinder.bindAdmin("/trashBin", "scm-repository-trash-bin-plugin.navLink", "fas fa-trash", "trashBin", TrashBin);
+import sonia.scm.api.v2.resources.ConfigurationAdapterBase;
+import sonia.scm.api.v2.resources.Enrich;
+import sonia.scm.api.v2.resources.Index;
+import sonia.scm.api.v2.resources.ScmPathInfoStore;
+import sonia.scm.plugin.Extension;
+import sonia.scm.store.ConfigurationStoreFactory;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.ws.rs.Path;
+
+@Path("v2/trashBinConfig")
+@Extension
+@Enrich(Index.class)
+public class RepositoryTrashBinConfigAdapter extends ConfigurationAdapterBase<TrashBinConfig, TrashBinConfigDto> {
+
+  @Inject
+  public RepositoryTrashBinConfigAdapter(Provider<ScmPathInfoStore> scmPathInfoStore, ConfigurationStoreFactory storeFactory) {
+    super(storeFactory, scmPathInfoStore, TrashBinConfig.class, TrashBinConfigDto.class);
+  }
+
+  @Override
+  protected String getName() {
+    return "trashBinConfig";
+  }
+}

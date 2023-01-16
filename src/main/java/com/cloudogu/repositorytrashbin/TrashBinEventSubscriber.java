@@ -22,17 +22,31 @@
  * SOFTWARE.
  */
 
-import { binder } from "@scm-manager/ui-extensions";
-import { ConfigurationBinder as cfgBinder } from "@scm-manager/ui-components";
-import MoveToTrashBinButton from "./MoveToTrashBinButton";
-import TrashBinConfiguration from "./TrashBinConfiguration";
-import TrashBin from "./TrashBin";
+package com.cloudogu.repositorytrashbin;
 
-binder.bind("repository.deleteButton", MoveToTrashBinButton, ({ repository }) => repository._links?.delete);
-cfgBinder.bindGlobal(
-  "/trashBin",
-  "scm-repository-trash-bin-plugin.config.link",
-  "trashBinConfig",
-  TrashBinConfiguration
-);
-cfgBinder.bindAdmin("/trashBin", "scm-repository-trash-bin-plugin.navLink", "fas fa-trash", "trashBin", TrashBin);
+import com.github.legman.Subscribe;
+import sonia.scm.EagerSingleton;
+import sonia.scm.HandlerEventType;
+import sonia.scm.plugin.Extension;
+import sonia.scm.repository.RepositoryEvent;
+
+import javax.inject.Inject;
+
+@Extension
+@EagerSingleton
+public class TrashBinEventSubscriber {
+
+  private final RepositoryBinManager binManager;
+
+  @Inject
+  public TrashBinEventSubscriber(RepositoryBinManager binManager) {
+    this.binManager = binManager;
+  }
+
+  @Subscribe(async = false)
+  public void onEvent(RepositoryEvent event) {
+    if (event.getEventType() == HandlerEventType.BEFORE_DELETE) {
+      binManager.addToTrashBin(event.getItem());
+    }
+  }
+}

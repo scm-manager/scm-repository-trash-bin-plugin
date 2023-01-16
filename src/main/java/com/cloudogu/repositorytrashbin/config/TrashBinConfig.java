@@ -22,17 +22,24 @@
  * SOFTWARE.
  */
 
-import { binder } from "@scm-manager/ui-extensions";
-import { ConfigurationBinder as cfgBinder } from "@scm-manager/ui-components";
-import MoveToTrashBinButton from "./MoveToTrashBinButton";
-import TrashBinConfiguration from "./TrashBinConfiguration";
-import TrashBin from "./TrashBin";
+package com.cloudogu.repositorytrashbin.config;
 
-binder.bind("repository.deleteButton", MoveToTrashBinButton, ({ repository }) => repository._links?.delete);
-cfgBinder.bindGlobal(
-  "/trashBin",
-  "scm-repository-trash-bin-plugin.config.link",
-  "trashBinConfig",
-  TrashBinConfiguration
-);
-cfgBinder.bindAdmin("/trashBin", "scm-repository-trash-bin-plugin.navLink", "fas fa-trash", "trashBin", TrashBin);
+import com.cloudogu.conveyor.GenerateDto;
+import com.cloudogu.conveyor.Include;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.Pattern;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@GenerateDto
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@XmlRootElement
+public class TrashBinConfig {
+  @Include
+  @Pattern(regexp = "7|14|30")
+  private String retentionTime = "30";
+}

@@ -22,17 +22,35 @@
  * SOFTWARE.
  */
 
-import { binder } from "@scm-manager/ui-extensions";
-import { ConfigurationBinder as cfgBinder } from "@scm-manager/ui-components";
-import MoveToTrashBinButton from "./MoveToTrashBinButton";
-import TrashBinConfiguration from "./TrashBinConfiguration";
-import TrashBin from "./TrashBin";
+package com.cloudogu.repositorytrashbin;
 
-binder.bind("repository.deleteButton", MoveToTrashBinButton, ({ repository }) => repository._links?.delete);
-cfgBinder.bindGlobal(
-  "/trashBin",
-  "scm-repository-trash-bin-plugin.config.link",
-  "trashBinConfig",
-  TrashBinConfiguration
-);
-cfgBinder.bindAdmin("/trashBin", "scm-repository-trash-bin-plugin.navLink", "fas fa-trash", "trashBin", TrashBin);
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import sonia.scm.schedule.Scheduler;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+
+@ExtendWith(MockitoExtension.class)
+class RepositoryBinCleanupJobTest {
+
+  @Mock
+  private Scheduler scheduler;
+  @Mock
+  private RepositoryBinManager binManager;
+
+  @InjectMocks
+  private RepositoryBinCleanupJob cleanupJob;
+
+  @Test
+  void shouldScheduleJob() {
+    cleanupJob.run();
+
+    verify(scheduler).schedule(eq("0 0 2 * * ?"), any(Runnable.class));
+    verify(binManager).deleteAllExpired();
+  }
+}

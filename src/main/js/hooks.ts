@@ -22,20 +22,27 @@
  * SOFTWARE.
  */
 
-package com.cloudogu.repositorytrashbin;
+import { useMutation, useQuery, useQueryClient, UseMutationOptions } from "react-query";
+import { apiClient } from "@scm-manager/ui-api";
+import { TrashBinEntryCollection } from "./types";
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+export const useTrashBin = (link: string) =>
+  useQuery<TrashBinEntryCollection, Error>("trashBin", () => apiClient.get(link).then(r => r.json()));
 
-@Path("v2/sample")
-class SampleResource {
+export const useRestoreTrashBinEntry = (link: string, onError: UseMutationOptions<unknown, Error>["onError"]) => {
+  const queryClient = useQueryClient();
+  return useMutation<unknown, Error>({
+    mutationFn: () => apiClient.post(link),
+    onSuccess: () => queryClient.invalidateQueries("trashBin"),
+    onError
+  });
+};
 
-  @GET
-  @Produces(MediaType.TEXT_PLAIN)
-  public String sample() {
-    return "Sample";
-  }
-
-}
+export const useDeleteTrashBin = (link: string, onError: UseMutationOptions<unknown, Error>["onError"]) => {
+  const queryClient = useQueryClient();
+  return useMutation<unknown, Error>({
+    mutationFn: () => apiClient.delete(link),
+    onSuccess: () => queryClient.invalidateQueries("trashBin"),
+    onError
+  });
+};

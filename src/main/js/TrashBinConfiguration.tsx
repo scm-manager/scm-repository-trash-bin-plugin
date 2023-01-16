@@ -22,17 +22,34 @@
  * SOFTWARE.
  */
 
-import { binder } from "@scm-manager/ui-extensions";
-import { ConfigurationBinder as cfgBinder } from "@scm-manager/ui-components";
-import MoveToTrashBinButton from "./MoveToTrashBinButton";
-import TrashBinConfiguration from "./TrashBinConfiguration";
-import TrashBin from "./TrashBin";
+import React, { FC } from "react";
+import { RETENTION_TIME_OPTIONS, TrashBinConfig } from "./types";
+import { ConfigurationForm, Form } from "@scm-manager/ui-forms";
+import { Title } from "@scm-manager/ui-components";
+import { useTranslation } from "react-i18next";
 
-binder.bind("repository.deleteButton", MoveToTrashBinButton, ({ repository }) => repository._links?.delete);
-cfgBinder.bindGlobal(
-  "/trashBin",
-  "scm-repository-trash-bin-plugin.config.link",
-  "trashBinConfig",
-  TrashBinConfiguration
-);
-cfgBinder.bindAdmin("/trashBin", "scm-repository-trash-bin-plugin.navLink", "fas fa-trash", "trashBin", TrashBin);
+const TrashBinConfiguration: FC<{ link: string }> = ({ link }) => {
+  const [t] = useTranslation("plugins");
+
+  return (
+    <>
+      <Title title={t("scm-repository-trash-bin-plugin.config.title")} />
+      <ConfigurationForm<TrashBinConfig>
+        link={link}
+        translationPath={["plugins", "scm-repository-trash-bin-plugin.config.form"]}
+      >
+        <Form.Row>
+          <Form.Select name="retentionTime">
+            {RETENTION_TIME_OPTIONS.map(value => (
+              <option value={value} key={value}>
+                {value}
+              </option>
+            ))}
+          </Form.Select>
+        </Form.Row>
+      </ConfigurationForm>
+    </>
+  );
+};
+
+export default TrashBinConfiguration;

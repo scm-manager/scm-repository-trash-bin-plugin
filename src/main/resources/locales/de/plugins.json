@@ -1,5 +1,67 @@
 {
   "scm-repository-trash-bin-plugin": {
-
+    "navLink": "Repository Papierkorb",
+    "config": {
+      "link": "Repository Papierkorb",
+      "title": "Repository Papierkorb Konfiguration",
+      "form": {
+        "retentionTime": {
+          "label": "Aufbewahrungszeit",
+          "helpText": "Zeit für die Aufbewahrung von gelöschten Repositories im Verhältnis zum Löschungszeitpunkt"
+        },
+        "submit": "Speichern"
+      }
+    },
+    "repository": {
+      "deleteButton": "Repository löschen",
+      "subtitle": "Repository löschen",
+      "description": "Gelöschte Repositories können von Administratoren wiederhergestellt werden.",
+      "confirmAlert": {
+        "title": "Repository löschen",
+        "message": "Gelöschte Repositories können innerhalb eines konfigurierten Zeitraums von Administratoren wiederhergestellt werden.",
+        "submit": "Löschen",
+        "cancel": "Abbrechen"
+      }
+    },
+    "trashBin": {
+      "title": "Repository Papierkorb",
+      "empty": "Keine Repositories im Papierkorb gefunden",
+      "table": {
+        "repository": "Repository",
+        "deletedBy": "Gelöscht von",
+        "deletedAt": "Gelöscht",
+        "delete": "Löschen",
+        "restore": "Wiederherstellen",
+        "deleteAll": "Alle löschen"
+      },
+      "confirmAlert": {
+        "title": "Alle Repositories löschen",
+        "message": "Löscht alle Repositories im Papierkorb",
+        "submit": "Alles löschen",
+        "cancel": "Abbrechen"
+      }
+    }
+  },
+  "errors": {
+    "D2TS3apYm1": {
+      "displayName": "Repository Papierkorb",
+      "description": "Zugriff auf den Repository Papierkorb fehlgeschlagen"
+    }
+  },
+  "permissions": {
+    "configuration": {
+      "read,write": {
+        "trashBin": {
+          "displayName": "Papierkorb konfigurieren",
+          "description": "Darf den Repository Papierkorb konfigurieren"
+        }
+      }
+    },
+    "trashBin": {
+      "manage": {
+        "displayName": "Repository Papierkorb verwalten",
+        "description": "Darf den Repository Papierkorb lesen und verwalten"
+      }
+    }
   }
 }

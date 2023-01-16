@@ -33,7 +33,7 @@ dependencies {
 }
 
 scmPlugin {
-  scmVersion = "2.40.1-SNAPSHOT"
+  scmVersion = "2.40.2-SNAPSHOT"
   displayName = "Repository Trash Bin"
   description = "Move repositories to trash bin instead of instant deletion"
 
@@ -42,7 +42,8 @@ scmPlugin {
 
   openapi {
     packages = [
-      "com.cloudogu.repositorytrashbin"
+      "com.cloudogu.repositorytrashbin",
+      "com.cloudogu.repositorytrashbin.config"
     ]
   }
 }

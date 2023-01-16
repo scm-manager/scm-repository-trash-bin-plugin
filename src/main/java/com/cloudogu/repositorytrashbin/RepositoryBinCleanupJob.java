@@ -22,10 +22,29 @@
  * SOFTWARE.
  */
 
-describe("frontend unit tests", () => {
+package com.cloudogu.repositorytrashbin;
 
-  it("some test", () => {
-    expect( 21 * 2 ).toBe(42);
-  });
+import sonia.scm.lifecycle.PrivilegedStartupAction;
+import sonia.scm.plugin.Extension;
+import sonia.scm.schedule.Scheduler;
 
-});
+import javax.inject.Inject;
+
+@Extension
+public class RepositoryBinCleanupJob implements PrivilegedStartupAction {
+
+  private final Scheduler scheduler;
+  private final RepositoryBinManager binManager;
+
+  @Inject
+  public RepositoryBinCleanupJob(Scheduler scheduler, RepositoryBinManager binManager) {
+    this.scheduler = scheduler;
+    this.binManager = binManager;
+  }
+
+  @Override
+  public void run() {
+    binManager.deleteAllExpired();
+    scheduler.schedule("0 0 2 * * ?", binManager::deleteAllExpired);
+  }
+}

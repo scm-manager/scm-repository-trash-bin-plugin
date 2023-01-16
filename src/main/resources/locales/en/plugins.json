@@ -1,5 +1,67 @@
 {
   "scm-repository-trash-bin-plugin": {
-
+    "navLink": "Repository Trash Bin",
+    "config": {
+      "link": "Repository Trash Bin",
+      "title": "Repository Trash Bin Configuration",
+      "form": {
+        "retentionTime": {
+          "label": "Retention Time",
+          "helpText": "Time for retention of deleted repositories in relation to the time of deletion"
+        },
+        "submit": "Submit"
+      }
+    },
+    "repository": {
+      "deleteButton": "Delete repository",
+      "subtitle": "Delete repository",
+      "description": "Deletes repository. It can be restored by administrators.",
+      "confirmAlert": {
+        "title": "Delete repository",
+        "message": "Delete repository. It can be restored by administrators within the configured retention period.",
+        "submit": "Delete",
+        "cancel": "Cancel"
+      }
+    },
+    "trashBin": {
+      "title": "Repository Trash Bin",
+      "empty": "Found no repositories in trash bin",
+      "table": {
+        "repository": "Repository",
+        "deletedBy": "Deleted by",
+        "deletedAt": "Deleted at",
+        "delete": "Delete",
+        "restore": "Restore",
+        "deleteAll": "Delete all"
+      },
+      "confirmAlert": {
+        "title": "Delete all repositories",
+        "message": "Deletes all repositories in the trash bin.",
+        "submit": "Delete all",
+        "cancel": "Cancel"
+      }
+    }
+  },
+  "errors": {
+    "D2TS3apYm1": {
+      "displayName": "Repository Trash Bin",
+      "description": "Access to the repository trash bin failed"
+    }
+  },
+  "permissions": {
+    "configuration": {
+      "read,write": {
+        "trashBin": {
+          "displayName": "Configure trash bin",
+          "description": "May configure the repository trash bin"
+        }
+      }
+    },
+    "trashBin": {
+      "manage": {
+        "displayName": "Manage trash bin",
+        "description": "May access and manage the repository trash bin"
+      }
+    }
   }
 }
