@@ -13,11 +13,11 @@
       }
     },
     "repository": {
-      "deleteButton": "Delete repository",
+      "deleteButton": "Delete Repository",
       "subtitle": "Delete repository",
       "description": "Deletes repository. It can be restored by administrators.",
       "confirmAlert": {
-        "title": "Delete repository",
+        "title": "Delete Repository",
         "message": "Delete repository. It can be restored by administrators within the configured retention period.",
         "submit": "Delete",
         "cancel": "Cancel"
@@ -35,7 +35,7 @@
         "deleteAll": "Delete all"
       },
       "confirmAlert": {
-        "title": "Delete all repositories",
+        "title": "Delete all Repositories",
         "message": "Deletes all repositories in the trash bin.",
         "submit": "Delete all",
         "cancel": "Cancel"
