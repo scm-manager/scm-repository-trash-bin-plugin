@@ -6,7 +6,7 @@
       "title": "Repository Trash Bin Configuration",
       "form": {
         "retentionTime": {
-          "label": "Retention Time",
+          "label": "Retention Time in days",
           "helpText": "Time for retention of deleted repositories in relation to the time of deletion"
         },
         "submit": "Submit"
@@ -51,7 +51,7 @@
   "permissions": {
     "configuration": {
       "read,write": {
-        "trashBin": {
+        "trashBinConfig": {
           "displayName": "Configure trash bin",
           "description": "May configure the repository trash bin"
         }

@@ -35,7 +35,6 @@ import sonia.scm.store.BlobStore;
 import sonia.scm.store.BlobStoreFactory;
 import sonia.scm.store.ConfigurationEntryStore;
 import sonia.scm.store.ConfigurationEntryStoreFactory;
-import sonia.scm.web.security.AdministrationContext;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

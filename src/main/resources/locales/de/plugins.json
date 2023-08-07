@@ -6,7 +6,7 @@
       "title": "Repository Papierkorb Konfiguration",
       "form": {
         "retentionTime": {
-          "label": "Aufbewahrungszeit",
+          "label": "Aufbewahrungszeit in Tagen",
           "helpText": "Zeit für die Aufbewahrung von gelöschten Repositories im Verhältnis zum Löschungszeitpunkt"
         },
         "submit": "Speichern"
@@ -51,7 +51,7 @@
   "permissions": {
     "configuration": {
       "read,write": {
-        "trashBin": {
+        "trashBinConfig": {
           "displayName": "Papierkorb konfigurieren",
           "description": "Darf den Repository Papierkorb konfigurieren"
         }
