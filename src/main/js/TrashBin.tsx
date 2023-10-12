@@ -110,7 +110,7 @@ const DeleteButton: FC<ButtonProps> = ({ entry, setError }) => {
   const [t] = useTranslation("plugins");
   const { mutate: deleteTrash, isLoading } = useDeleteTrashBin((entry._links?.delete as Link).href, setError);
   return (
-    <Button variant="tertiary" isLoading={isLoading} onClick={() => deleteTrash()}>
+    <Button variant="secondary" isLoading={isLoading} onClick={() => deleteTrash()}>
       {t("scm-repository-trash-bin-plugin.trashBin.table.delete")}
     </Button>
   );
@@ -120,7 +120,7 @@ const RestoreButton: FC<ButtonProps> = ({ entry, setError }) => {
   const [t] = useTranslation("plugins");
   const { mutate: restore, isLoading } = useRestoreTrashBinEntry((entry._links?.restore as Link).href, setError);
   return (
-    <Button className="ml-3" variant="tertiary" isLoading={isLoading} onClick={() => restore()}>
+    <Button className="ml-3" variant="primary" isLoading={isLoading} onClick={() => restore()}>
       {t("scm-repository-trash-bin-plugin.trashBin.table.restore")}
     </Button>
   );
@@ -136,7 +136,7 @@ const DeleteAllButton: FC<{ entries: TrashBinEntryCollection; setError: (error: 
 
   return (
     <>
-      <Button variant="tertiary" onClick={() => setShowConfirmAlert(true)}>
+      <Button variant="secondary" onClick={() => setShowConfirmAlert(true)}>
         {t("scm-repository-trash-bin-plugin.trashBin.table.deleteAll")}
       </Button>
       {showConfirmAlert ? (
