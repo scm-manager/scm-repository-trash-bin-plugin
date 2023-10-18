@@ -30,6 +30,7 @@ import org.apache.shiro.SecurityUtils;
 import sonia.scm.repository.FullRepositoryExporter;
 import sonia.scm.repository.FullRepositoryImporter;
 import sonia.scm.repository.Repository;
+import sonia.scm.repository.RepositoryPermissions;
 import sonia.scm.store.Blob;
 import sonia.scm.store.BlobStore;
 import sonia.scm.store.BlobStoreFactory;
@@ -78,7 +79,7 @@ public class RepositoryBinManager {
   }
 
   public void addToTrashBin(Repository repository) {
-    checkPermission();
+    RepositoryPermissions.delete(repository).check();
     createStore().put(repository.getId(), new TrashBinEntry(repository, SecurityUtils.getSubject().getPrincipal().toString(), Instant.now()));
     Blob blob = createBlobStore().create(repository.getId());
     try {

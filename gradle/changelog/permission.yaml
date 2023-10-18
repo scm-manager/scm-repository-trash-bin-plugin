@@ -1,0 +1,2 @@
+- type: fixed
+  description: Fix permission to move deleted repositories to trash bin

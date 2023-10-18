@@ -46,8 +46,6 @@ import sonia.scm.store.ConfigurationEntryStoreFactory;
 import sonia.scm.store.InMemoryBlobStore;
 import sonia.scm.store.InMemoryBlobStoreFactory;
 import sonia.scm.store.InMemoryConfigurationEntryStoreFactory;
-import sonia.scm.web.security.AdministrationContext;
-import sonia.scm.web.security.PrivilegedAction;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -95,23 +93,42 @@ class RepositoryBinManagerTest {
     assertThrows(AuthorizationException.class, () -> createBinManager().delete(RepositoryTestData.create42Puzzle().getId()));
   }
 
+  @Test
+  @SubjectAware(permissions = "repository:delete:id-1")
+  void shouldMoveRepoToTrash() {
+    blobStoreFactory = new InMemoryBlobStoreFactory(blobStore);
+    storeFactory = new InMemoryConfigurationEntryStoreFactory();
+    Repository puzzle = RepositoryTestData.create42Puzzle();
+    puzzle.setId("id-1");
+
+    createBinManager().addToTrashBin(puzzle);
+
+    verify(exporter).export(eq(puzzle), any(), eq(""));
+    assertThat(storeFactory.withType(TrashBinEntry.class).withName(STORE_NAME).build().get(puzzle.getId())).isNotNull();
+    assertThat(blobStore.get(puzzle.getId())).isNotNull();
+  }
+
   @Nested
-  @SubjectAware(permissions = MANAGE_TRASH_BIN)
+  @SubjectAware(permissions = {MANAGE_TRASH_BIN, "repository:delete:id-1"})
   class WithPermission {
+    Repository puzzle = RepositoryTestData.create42Puzzle();
+    RepositoryBinManager binManager;
 
     @BeforeEach
-    void initStores() {
+    void init() {
       blobStoreFactory = new InMemoryBlobStoreFactory(blobStore);
       storeFactory = new InMemoryConfigurationEntryStoreFactory();
+      puzzle.setId("id-1");
+      binManager = createBinManager();
     }
 
     @Test
+    @SubjectAware(permissions = {"repository:delete:id-2"})
     void shouldGetAllTrashedRepos() {
-      Repository puzzle = RepositoryTestData.create42Puzzle();
-      RepositoryBinManager binManager = createBinManager();
       binManager.addToTrashBin(puzzle);
 
       Repository verticalPeopleTransporter = RepositoryTestData.createHappyVerticalPeopleTransporter();
+      verticalPeopleTransporter.setId("id-2");
       binManager.addToTrashBin(verticalPeopleTransporter);
 
       Collection<TrashBinEntry> entries = binManager.getAll();
@@ -120,22 +137,10 @@ class RepositoryBinManagerTest {
     }
 
     @Test
-    void shouldMoveRepoToTrash() {
-      Repository puzzle = RepositoryTestData.create42Puzzle();
-
-      createBinManager().addToTrashBin(puzzle);
-
-      verify(exporter).export(eq(puzzle), any(), eq(""));
-      assertThat(storeFactory.withType(TrashBinEntry.class).withName(STORE_NAME).build().get(puzzle.getId())).isNotNull();
-      assertThat(blobStore.get(puzzle.getId())).isNotNull();
-    }
-
-    @Test
     void shouldRestoreTrashedRepository() {
-      Repository puzzle = RepositoryTestData.create42Puzzle();
-      createBinManager().addToTrashBin(puzzle);
+      binManager.addToTrashBin(puzzle);
 
-      createBinManager().restore(puzzle.getId());
+      binManager.restore(puzzle.getId());
 
       verify(importer).importFromStream(eq(puzzle), any(), eq(""));
       assertThat(storeFactory.withType(TrashBinEntry.class).withName(STORE_NAME).build().get(puzzle.getId())).isNull();
@@ -144,10 +149,9 @@ class RepositoryBinManagerTest {
 
     @Test
     void shouldDeleteTrashedRepository() {
-      Repository puzzle = RepositoryTestData.create42Puzzle();
-      createBinManager().addToTrashBin(puzzle);
+      binManager.addToTrashBin(puzzle);
 
-      createBinManager().delete(puzzle.getId());
+      binManager.delete(puzzle.getId());
 
       assertThat(storeFactory.withType(TrashBinEntry.class).withName(STORE_NAME).build().get(puzzle.getId())).isNull();
       assertThat(blobStore.get(puzzle.getId())).isNull();
@@ -158,7 +162,6 @@ class RepositoryBinManagerTest {
       when(configAdapter.getConfiguration()).thenReturn(new TrashBinConfig());
       ConfigurationEntryStore<TrashBinEntry> store = storeFactory.withType(TrashBinEntry.class).withName(STORE_NAME).build();
 
-      Repository puzzle = RepositoryTestData.create42Puzzle();
       store.put(puzzle.getId(), new TrashBinEntry(puzzle, "trillian", Instant.now()));
       blobStore.create(puzzle.getId());
 
@@ -170,7 +173,7 @@ class RepositoryBinManagerTest {
       store.put(verticalPeopleTransporter.getId(), new TrashBinEntry(verticalPeopleTransporter, "zaphod", Instant.now().minus(42, ChronoUnit.DAYS)));
       blobStore.create(verticalPeopleTransporter.getId());
 
-      createBinManager().deleteAllExpired();
+      binManager.deleteAllExpired();
 
       assertThat(blobStore.getAll()).hasSize(1);
       assertThat(blobStore.get(puzzle.getId())).isNotNull();
@@ -194,7 +197,7 @@ class RepositoryBinManagerTest {
       store.put(verticalPeopleTransporter.getId(), new TrashBinEntry(verticalPeopleTransporter, "zaphod", Instant.now().plus(42, ChronoUnit.DAYS)));
       blobStore.create(verticalPeopleTransporter.getId());
 
-      createBinManager().deleteAll();
+      binManager.deleteAll();
 
       assertThat(blobStore.getAll()).isEmpty();
       assertThat(store.getAll().values()).isEmpty();
