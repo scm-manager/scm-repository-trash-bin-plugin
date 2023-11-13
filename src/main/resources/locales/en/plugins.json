@@ -6,8 +6,7 @@
       "title": "Repository Trash Bin Configuration",
       "form": {
         "retentionTime": {
-          "label": "Retention Time in days",
-          "helpText": "Time for retention of deleted repositories in relation to the time of deletion"
+          "label": "Retention period of deleted repositories in days in relation to the time of deletion"
         },
         "submit": "Submit"
       }

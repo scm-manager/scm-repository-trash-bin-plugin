@@ -6,8 +6,7 @@
       "title": "Repository Papierkorb Konfiguration",
       "form": {
         "retentionTime": {
-          "label": "Aufbewahrungszeit in Tagen",
-          "helpText": "Zeit für die Aufbewahrung von gelöschten Repositories im Verhältnis zum Löschungszeitpunkt"
+          "label": "Aufbewahrungsdauer von gelöschten Repositorys in Tagen im Verhältnis zum Löschungszeitpunkt"
         },
         "submit": "Speichern"
       }
