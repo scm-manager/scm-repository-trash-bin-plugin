@@ -33,6 +33,7 @@ cfgBinder.bindGlobal(
   "/trashBin",
   "scm-repository-trash-bin-plugin.config.link",
   "trashBinConfig",
-  TrashBinConfiguration
+  TrashBinConfiguration,
+  "RepositoryTrashBin"
 );
 cfgBinder.bindAdmin("/trashBin", "scm-repository-trash-bin-plugin.navLink", "fas fa-trash", "trashBin", TrashBin);
