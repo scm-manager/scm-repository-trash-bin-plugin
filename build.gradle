@@ -25,7 +25,7 @@ dependencies {
 }
 
 scmPlugin {
-  scmVersion = "3.0.0"
+  scmVersion = "3.7.0"
   displayName = "Repository Trash Bin"
   description = "Move repositories to trash bin instead of instant deletion"
 

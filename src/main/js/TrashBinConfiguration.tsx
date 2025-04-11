@@ -19,9 +19,11 @@ import { RETENTION_TIME_OPTIONS, TrashBinConfig } from "./types";
 import { ConfigurationForm, Form } from "@scm-manager/ui-forms";
 import { Title } from "@scm-manager/ui-components";
 import { useTranslation } from "react-i18next";
+import { useDocumentTitle } from "@scm-manager/ui-core";
 
 const TrashBinConfiguration: FC<{ link: string }> = ({ link }) => {
   const [t] = useTranslation("plugins");
+  useDocumentTitle(t("scm-repository-trash-bin-plugin.config.link"));
 
   return (
     <>

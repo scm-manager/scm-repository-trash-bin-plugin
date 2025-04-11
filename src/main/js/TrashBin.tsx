@@ -32,6 +32,7 @@ import { useTranslation } from "react-i18next";
 import { TrashBinEntry, TrashBinEntryCollection } from "./types";
 import { Link } from "@scm-manager/ui-types";
 import { Button } from "@scm-manager/ui-buttons";
+import { useDocumentTitle } from "@scm-manager/ui-core";
 
 const TrashBin: FC<{
   link: string;
@@ -39,6 +40,7 @@ const TrashBin: FC<{
   const { data, isLoading, error: loadError } = useTrashBin(link);
   const [error, setError] = useState<Error | undefined | null>();
   const [t] = useTranslation("plugins");
+  useDocumentTitle(t("scm-repository-trash-bin-plugin.navLink"));
 
   let content: ReactElement;
   let deleteAllButton: ReactElement | undefined;
