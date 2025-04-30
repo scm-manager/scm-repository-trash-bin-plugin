@@ -15,15 +15,13 @@
  */
 
 import React, { FC } from "react";
-import { RETENTION_TIME_OPTIONS, TrashBinConfig } from "./types";
-import { ConfigurationForm, Form } from "@scm-manager/ui-forms";
-import { Title } from "@scm-manager/ui-components";
 import { useTranslation } from "react-i18next";
-import { useDocumentTitle } from "@scm-manager/ui-core";
+import { Title } from "@scm-manager/ui-core";
+import { ConfigurationForm, Form } from "@scm-manager/ui-forms";
+import { RETENTION_TIME_OPTIONS, TrashBinConfig } from "./types";
 
 const TrashBinConfiguration: FC<{ link: string }> = ({ link }) => {
   const [t] = useTranslation("plugins");
-  useDocumentTitle(t("scm-repository-trash-bin-plugin.config.link"));
 
   return (
     <>
