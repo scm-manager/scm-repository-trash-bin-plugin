@@ -31,6 +31,7 @@ import sonia.scm.repository.FullRepositoryExporter;
 import sonia.scm.repository.FullRepositoryImporter;
 import sonia.scm.repository.Repository;
 import sonia.scm.repository.RepositoryTestData;
+import sonia.scm.security.KeyGenerator;
 import sonia.scm.store.BlobStore;
 import sonia.scm.store.BlobStoreFactory;
 import sonia.scm.store.ConfigurationEntryStore;
@@ -65,6 +66,8 @@ class RepositoryBinManagerTest {
   private FullRepositoryExporter exporter;
   @Mock
   private RepositoryTrashBinConfigAdapter configAdapter;
+  @Mock
+  private KeyGenerator keyGenerator;
 
   @Test
   void shouldThrowAuthorizationExceptionOnGetAll() {
@@ -93,11 +96,14 @@ class RepositoryBinManagerTest {
     Repository puzzle = RepositoryTestData.create42Puzzle();
     puzzle.setId("id-1");
 
+    String newRepoId = "id-1337";
+    when(keyGenerator.createKey()).thenReturn(newRepoId);
+
     createBinManager().addToTrashBin(puzzle);
 
     verify(exporter).export(eq(puzzle), any(), eq(""));
-    assertThat(storeFactory.withType(TrashBinEntry.class).withName(STORE_NAME).build().get(puzzle.getId())).isNotNull();
-    assertThat(blobStore.get(puzzle.getId())).isNotNull();
+    assertThat(storeFactory.withType(TrashBinEntry.class).withName(STORE_NAME).build().get(newRepoId)).isNotNull();
+    assertThat(blobStore.get(newRepoId)).isNotNull();
   }
 
   @Nested
@@ -117,36 +123,52 @@ class RepositoryBinManagerTest {
     @Test
     @SubjectAware(permissions = {"repository:delete:id-2"})
     void shouldGetAllTrashedRepos() {
+      String newPuzzleId = "newPuzzle";
+      when(keyGenerator.createKey()).thenReturn(newPuzzleId);
       binManager.addToTrashBin(puzzle);
 
+      String newVerticalPeopleTransporterId = "newVerticalPeopleTransporterId";
+      when(keyGenerator.createKey()).thenReturn(newVerticalPeopleTransporterId);
       Repository verticalPeopleTransporter = RepositoryTestData.createHappyVerticalPeopleTransporter();
       verticalPeopleTransporter.setId("id-2");
       binManager.addToTrashBin(verticalPeopleTransporter);
 
+      Repository deletedPuzzleRepo = puzzle.clone();
+      deletedPuzzleRepo.setId(newPuzzleId);
+      Repository deletedTransporterRepo = verticalPeopleTransporter.clone();
+      deletedTransporterRepo.setId(newVerticalPeopleTransporterId);
+
       Collection<TrashBinEntry> entries = binManager.getAll();
       assertThat(entries).hasSize(2);
-      assertThat(entries.stream().map(TrashBinEntry::getRepository)).contains(puzzle, verticalPeopleTransporter);
+      assertThat(entries.stream().map(TrashBinEntry::getRepository)).contains(deletedPuzzleRepo, deletedTransporterRepo);
     }
 
     @Test
     void shouldRestoreTrashedRepository() {
+      String newPuzzleId = "newPuzzle";
+      when(keyGenerator.createKey()).thenReturn(newPuzzleId);
       binManager.addToTrashBin(puzzle);
 
-      binManager.restore(puzzle.getId());
+      binManager.restore(newPuzzleId);
 
-      verify(importer).importFromStream(eq(puzzle), any(), eq(""));
-      assertThat(storeFactory.withType(TrashBinEntry.class).withName(STORE_NAME).build().get(puzzle.getId())).isNull();
-      assertThat(blobStore.get(puzzle.getId())).isNull();
+      Repository deletedPuzzle = puzzle.clone();
+      deletedPuzzle.setId(newPuzzleId);
+
+      verify(importer).importFromStream(eq(deletedPuzzle), any(), eq(""));
+      assertThat(storeFactory.withType(TrashBinEntry.class).withName(STORE_NAME).build().get(newPuzzleId)).isNull();
+      assertThat(blobStore.get(newPuzzleId)).isNull();
     }
 
     @Test
     void shouldDeleteTrashedRepository() {
+      String newPuzzleId = "newPuzzle";
+      when(keyGenerator.createKey()).thenReturn(newPuzzleId);
       binManager.addToTrashBin(puzzle);
 
-      binManager.delete(puzzle.getId());
+      binManager.delete(newPuzzleId);
 
-      assertThat(storeFactory.withType(TrashBinEntry.class).withName(STORE_NAME).build().get(puzzle.getId())).isNull();
-      assertThat(blobStore.get(puzzle.getId())).isNull();
+      assertThat(storeFactory.withType(TrashBinEntry.class).withName(STORE_NAME).build().get(newPuzzleId)).isNull();
+      assertThat(blobStore.get(newPuzzleId)).isNull();
     }
 
     @Test
@@ -197,6 +219,6 @@ class RepositoryBinManagerTest {
   }
 
   private RepositoryBinManager createBinManager() {
-    return new RepositoryBinManager(storeFactory, blobStoreFactory, importer, exporter, configAdapter);
+    return new RepositoryBinManager(storeFactory, blobStoreFactory, importer, exporter, configAdapter, keyGenerator);
   }
 }

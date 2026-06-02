@@ -23,6 +23,7 @@ import sonia.scm.repository.FullRepositoryExporter;
 import sonia.scm.repository.FullRepositoryImporter;
 import sonia.scm.repository.Repository;
 import sonia.scm.repository.RepositoryPermissions;
+import sonia.scm.security.KeyGenerator;
 import sonia.scm.store.Blob;
 import sonia.scm.store.BlobStore;
 import sonia.scm.store.BlobStoreFactory;
@@ -45,6 +46,7 @@ public class RepositoryBinManager {
   public static final String MANAGE_TRASH_BIN = "trashBin:manage";
   public static final String STORE_NAME = "trash-bin";
 
+  private final KeyGenerator keyGenerator;
   private final ConfigurationEntryStoreFactory storeFactory;
   private final BlobStoreFactory blobStoreFactory;
   private final FullRepositoryImporter importer;
@@ -57,7 +59,9 @@ public class RepositoryBinManager {
     BlobStoreFactory blobStoreFactory,
     FullRepositoryImporter importer,
     FullRepositoryExporter exporter,
-    RepositoryTrashBinConfigAdapter configAdapter) {
+    RepositoryTrashBinConfigAdapter configAdapter,
+    KeyGenerator keyGenerator) {
+    this.keyGenerator = keyGenerator;
     this.storeFactory = storeFactory;
     this.blobStoreFactory = blobStoreFactory;
     this.importer = importer;
@@ -72,8 +76,12 @@ public class RepositoryBinManager {
 
   public void addToTrashBin(Repository repository) {
     RepositoryPermissions.delete(repository).check();
-    createStore().put(repository.getId(), new TrashBinEntry(repository, SecurityUtils.getSubject().getPrincipal().toString(), Instant.now()));
-    Blob blob = createBlobStore().create(repository.getId());
+
+    Repository repoForTrashBin = repository.clone();
+    repoForTrashBin.setId(keyGenerator.createKey());
+    createStore().put(repoForTrashBin.getId(), new TrashBinEntry(repoForTrashBin, SecurityUtils.getSubject().getPrincipal().toString(), Instant.now()));
+    Blob blob = createBlobStore().create(repoForTrashBin.getId());
+
     try {
       exporter.export(repository, blob.getOutputStream(), "");
     } catch (IOException e) {
