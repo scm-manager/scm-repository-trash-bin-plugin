@@ -1,2 +1,0 @@
-- type: fixed
-  description: Conflict appearing when deleting a repository with the same ID as a repository inside the trash bin
