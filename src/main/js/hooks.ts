@@ -14,19 +14,24 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-import { useMutation, useQuery, useQueryClient, UseMutationOptions } from "react-query";
+import { useMutation, useQuery, useQueryClient, UseMutationOptions } from "@tanstack/react-query";
 import { apiClient } from "@scm-manager/ui-api";
 import { TrashBinEntryCollection } from "./types";
 
 export const useTrashBin = (link: string) =>
-  useQuery<TrashBinEntryCollection, Error>("trashBin", () => apiClient.get(link).then(r => r.json()));
+  useQuery<TrashBinEntryCollection, Error>({
+    queryKey: ["trashBin"],
+    queryFn: () => apiClient.get(link).then((r) => r.json()),
+  });
 
-export const useRestoreTrashBinEntry = (link: string, onError: UseMutationOptions<unknown, Error>["onError"]) => {
+export const useRestoreTrashBinEntry = (link: string, onError: UseMutationOptions<unknown, Error, void>["onError"]) => {
   const queryClient = useQueryClient();
-  return useMutation<unknown, Error>({
+  return useMutation({
     mutationFn: () => apiClient.post(link),
-    onSuccess: () => queryClient.invalidateQueries("trashBin"),
-    onError
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["trashBin"] });
+    },
+    onError,
   });
 };
 
@@ -34,7 +39,7 @@ export const useDeleteTrashBin = (link: string, onError: UseMutationOptions<unkn
   const queryClient = useQueryClient();
   return useMutation<unknown, Error>({
     mutationFn: () => apiClient.delete(link),
-    onSuccess: () => queryClient.invalidateQueries("trashBin"),
-    onError
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["trashBin"] }),
+    onError,
   });
 };

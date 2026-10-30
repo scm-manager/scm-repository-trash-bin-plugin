@@ -17,27 +17,25 @@
 import {
   Column,
   ConfirmAlert,
-  DateFromNow,
   ErrorNotification,
   Level,
   Loading,
   Notification,
   Table,
   TextColumn,
-  Title
+  Title,
 } from "@scm-manager/ui-components";
 import React, { FC, ReactElement, useState } from "react";
 import { useDeleteTrashBin, useRestoreTrashBinEntry, useTrashBin } from "./hooks";
 import { useTranslation } from "react-i18next";
 import { TrashBinEntry, TrashBinEntryCollection } from "./types";
 import { Link } from "@scm-manager/ui-types";
-import { Button } from "@scm-manager/ui-buttons";
-import { useDocumentTitle } from "@scm-manager/ui-core";
+import { Button, DateFromNow, useDocumentTitle } from "@scm-manager/ui-core";
+import { useIndexLink } from "@scm-manager/ui-api";
 
-const TrashBin: FC<{
-  link: string;
-}> = ({ link }) => {
-  const { data, isLoading, error: loadError } = useTrashBin(link);
+const TrashBin: FC = () => {
+  const index = useIndexLink("trashBin") || "";
+  const { data, isLoading, error: loadError } = useTrashBin(index);
   const [error, setError] = useState<Error | undefined | null>();
   const [t] = useTranslation("plugins");
   useDocumentTitle(t("scm-repository-trash-bin-plugin.navLink"));
@@ -102,7 +100,10 @@ type ButtonProps = {
 
 const DeleteButton: FC<ButtonProps> = ({ entry, setError }) => {
   const [t] = useTranslation("plugins");
-  const { mutate: deleteTrash, isLoading } = useDeleteTrashBin((entry._links?.delete as Link).href, setError);
+  const { mutate: deleteTrash, isPending: isLoading } = useDeleteTrashBin(
+    (entry._links?.delete as Link).href,
+    setError,
+  );
   return (
     <Button variant="secondary" isLoading={isLoading} onClick={() => deleteTrash()}>
       {t("scm-repository-trash-bin-plugin.trashBin.table.delete")}
@@ -112,7 +113,10 @@ const DeleteButton: FC<ButtonProps> = ({ entry, setError }) => {
 
 const RestoreButton: FC<ButtonProps> = ({ entry, setError }) => {
   const [t] = useTranslation("plugins");
-  const { mutate: restore, isLoading } = useRestoreTrashBinEntry((entry._links?.restore as Link).href, setError);
+  const { mutate: restore, isPending: isLoading } = useRestoreTrashBinEntry(
+    (entry._links?.restore as Link).href,
+    setError,
+  );
   return (
     <Button className="ml-3" variant="primary" isLoading={isLoading} onClick={() => restore()}>
       {t("scm-repository-trash-bin-plugin.trashBin.table.restore")}
@@ -122,10 +126,13 @@ const RestoreButton: FC<ButtonProps> = ({ entry, setError }) => {
 
 const DeleteAllButton: FC<{ entries: TrashBinEntryCollection; setError: (error: Error) => void }> = ({
   entries,
-  setError
+  setError,
 }) => {
   const [t] = useTranslation("plugins");
-  const { mutate: deleteAll, isLoading } = useDeleteTrashBin((entries._links?.deleteAll as Link).href, setError);
+  const { mutate: deleteAll, isPending: isLoading } = useDeleteTrashBin(
+    (entries._links?.deleteAll as Link).href,
+    setError,
+  );
   const [showConfirmAlert, setShowConfirmAlert] = useState(false);
 
   return (
@@ -141,14 +148,14 @@ const DeleteAllButton: FC<{ entries: TrashBinEntryCollection; setError: (error: 
             {
               label: t("scm-repository-trash-bin-plugin.trashBin.confirmAlert.submit"),
               isLoading,
-              onClick: deleteAll
+              onClick: deleteAll,
             },
             {
               className: "is-info",
               label: t("scm-repository-trash-bin-plugin.trashBin.confirmAlert.cancel"),
               onClick: () => null,
-              autofocus: true
-            }
+              autofocus: true,
+            },
           ]}
           close={() => setShowConfirmAlert(false)}
         />

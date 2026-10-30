@@ -21,11 +21,11 @@ import TrashBinConfiguration from "./TrashBinConfiguration";
 import TrashBin from "./TrashBin";
 
 binder.bind("repository.deleteButton", MoveToTrashBinButton, ({ repository }) => repository._links?.delete);
-cfgBinder.bindGlobal(
+cfgBinder.bindAdminSetting(
   "/trashBin",
   "scm-repository-trash-bin-plugin.config.link",
   "trashBinConfig",
   TrashBinConfiguration,
   "RepositoryTrashBin"
 );
-cfgBinder.bindAdmin("/trashBin", "scm-repository-trash-bin-plugin.navLink", "fas fa-trash", "trashBin", TrashBin);
+cfgBinder.bindAdmin("trashBin", "scm-repository-trash-bin-plugin.navLink", "fas fa-trash", TrashBin);

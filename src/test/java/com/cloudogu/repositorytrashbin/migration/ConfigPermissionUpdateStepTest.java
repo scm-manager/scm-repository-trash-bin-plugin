@@ -16,7 +16,6 @@
 
 package com.cloudogu.repositorytrashbin.migration;
 
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;

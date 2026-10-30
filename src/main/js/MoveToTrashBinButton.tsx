@@ -18,10 +18,10 @@ import { ConfirmAlert, ErrorNotification, Icon, Level } from "@scm-manager/ui-co
 import { Repository } from "@scm-manager/ui-types";
 import React, { FC, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDeleteRepository } from "@scm-manager/ui-api";
-import { Button } from "@scm-manager/ui-buttons";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { Button } from "@scm-manager/ui-core";
 
 type Props = {
   repository: Repository;
@@ -29,12 +29,12 @@ type Props = {
 
 const MoveToTrashBinButton: FC<Props> = ({ repository }) => {
   const [t] = useTranslation("plugins");
-  const history = useHistory();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { isLoading, error, remove: moveToTrashBin, isDeleted } = useDeleteRepository({
+  const { isPending: isLoading, error, remove: moveToTrashBin, isDeleted } = useDeleteRepository({
     onSuccess: async () => {
-      await queryClient.invalidateQueries("trashBin");
-      history.push("/repos/");
+      await queryClient.invalidateQueries({queryKey: ["trashBin"]});
+      navigate("/repos/");
     }
   });
   const [showConfirmAlert, setShowConfirmAlert] = useState(false);
