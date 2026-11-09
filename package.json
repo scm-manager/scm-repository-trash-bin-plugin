@@ -10,13 +10,13 @@
     "postinstall": "plugin-scripts postinstall"
   },
   "devDependencies": {
-    "@scm-manager/ui-plugins": "4.0.0-20260928-094717",
+    "@scm-manager/ui-plugins": "4.0.0-20261009-155806",
     "@scm-manager/plugin-scripts": "^1.6.1",
     "@scm-manager/babel-preset": "^2.13.1",
     "@scm-manager/eslint-config": "^2.18.2",
     "@scm-manager/prettier-config": "^2.12.0",
     "@scm-manager/tsconfig": "^3.0.0-alpha1",
-    "@scm-manager/ui-types": "4.0.0-20260928-094717",
+    "@scm-manager/ui-types": "4.0.0-20261009-155806",
     "@types/classnames": "^2.3.4",
     "@types/fetch-mock": "^7.3.1",
     "@types/i18next": "^13.0.0",
@@ -37,9 +37,9 @@
     "extends": "@scm-manager/eslint-config"
   },
   "dependencies": {
-    "@scm-manager/ui-api": "4.0.0-20260928-094717",
-    "@scm-manager/ui-components": "4.0.0-20260928-094717",
-    "@scm-manager/ui-core": "4.0.0-20260928-094717",
+    "@scm-manager/ui-api": "4.0.0-20261009-155806",
+    "@scm-manager/ui-components": "4.0.0-20261009-155806",
+    "@scm-manager/ui-core": "4.0.0-20261009-155806",
     "classnames": "^2.3.4",
     "query-string": "6.14.1",
     "react": "^19.1.1",
@@ -49,7 +49,7 @@
     "styled-components": "^6.1.19",
     "react-router": "^7.13.0",
     "react-dom": "^19.1.1",
-    "@scm-manager/ui-extensions": "4.0.0-20260928-094717",
+    "@scm-manager/ui-extensions": "4.0.0-20261009-155806",
     "@tanstack/react-query": "^5.90.6"
   }
 }

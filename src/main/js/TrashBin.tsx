@@ -14,23 +14,13 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-import {
-  Column,
-  ConfirmAlert,
-  ErrorNotification,
-  Level,
-  Loading,
-  Notification,
-  Table,
-  TextColumn,
-  Title,
-} from "@scm-manager/ui-components";
+import { ConfirmAlert, ErrorNotification, Level, Loading, Notification, Title } from "@scm-manager/ui-components";
 import React, { FC, ReactElement, useState } from "react";
 import { useDeleteTrashBin, useRestoreTrashBinEntry, useTrashBin } from "./hooks";
 import { useTranslation } from "react-i18next";
 import { TrashBinEntry, TrashBinEntryCollection } from "./types";
 import { Link } from "@scm-manager/ui-types";
-import { Button, DateFromNow, useDocumentTitle } from "@scm-manager/ui-core";
+import { Button, DateFromNow, useDocumentTitle, Table } from "@scm-manager/ui-core";
 import { useIndexLink } from "@scm-manager/ui-api";
 
 const TrashBin: FC = () => {
@@ -54,31 +44,31 @@ const TrashBin: FC = () => {
     content = (
       <div className="table-container">
         <Table data={data._embedded.entries} sortable={false}>
-          <Column
+          <Table.Column
             className="is-vertical-align-middle"
             header={t("scm-repository-trash-bin-plugin.trashBin.table.repository")}
           >
             {(row: TrashBinEntry) => `${row.namespace}/${row.name}`}
-          </Column>
-          <TextColumn
+          </Table.Column>
+          <Table.TextColumn
             className="is-vertical-align-middle"
             dataKey="deletedBy"
             header={t("scm-repository-trash-bin-plugin.trashBin.table.deletedBy")}
           />
-          <Column
+          <Table.Column
             className="is-vertical-align-middle"
             header={t("scm-repository-trash-bin-plugin.trashBin.table.deletedAt")}
           >
             {(row: TrashBinEntry) => <DateFromNow date={row.deletedAt} />}
-          </Column>
-          <Column header="">
+          </Table.Column>
+          <Table.Column header="">
             {(row: TrashBinEntry) => (
               <div className="is-flex is-justify-content-end">
                 <DeleteButton setError={setError} entry={row} />
                 {row._links.restore ? <RestoreButton setError={setError} entry={row} /> : null}
               </div>
             )}
-          </Column>
+          </Table.Column>
         </Table>
       </div>
     );
